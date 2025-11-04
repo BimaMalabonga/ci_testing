@@ -20,7 +20,7 @@ pytest = "^8.4.2"
 pytest-cov = "^7.0.0"
 black = "^25.9.0"
 darglint = "^1.8.1"
-isort = "^6.1.0"
+isort = "^7.0.0"
 colorama = "^0.4.6"
 pymarkdownlnt = "^0.9.32"
 
