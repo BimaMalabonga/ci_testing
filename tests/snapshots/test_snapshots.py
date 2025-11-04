@@ -281,7 +281,8 @@ def copy_outputs(src: Path, dst: Path):
     extensions_to_ignore = [".html"]
 
     # Clear destination directory
-    shutil.rmtree(dst)
+    if dst.is_dir():
+        shutil.rmtree(dst)
     dst.mkdir(parents=True, exist_ok=True)
 
     # Loop over files and sub-folders located in source directory
