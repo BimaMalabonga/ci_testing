@@ -24,7 +24,7 @@ jobs:
       - name: Determine target branch
         id: branch
         run: |
-          TARGET_BRANCH="${{ github.event.client_payload.branch || github.head_ref }}"
+          TARGET_BRANCH=${{ github.event.client_payload.branch || github.head_ref }}
           echo "Resolved target branch: $TARGET_BRANCH"
           echo "Event: ${{ github.event_name }}"
 
