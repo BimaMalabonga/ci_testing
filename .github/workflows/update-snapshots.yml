@@ -2,10 +2,6 @@ name: Update Snapshot Tests
 
 on:
   workflow_dispatch:
-    inputs:
-      target-branch:
-        description: 'Run workflow on the following branch'
-        required: true
 
 permissions:
   contents: write
@@ -23,26 +19,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: ${{ github.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-
-      - name: Check if target branch exists
-        run: |
-          BRANCH="${{ github.event.inputs.target-branch }}"
-          echo "🔍 Checking if branch '$BRANCH' exists on origin..."
-          
-          if git ls-remote --exit-code origin "$BRANCH"; then
-            echo "✅ Branch '$BRANCH' exists on origin."
-          else
-            echo "❌ ERROR: Branch '$BRANCH' does not exist on origin."
-            exit 1
-          fi
-
-      - name: Checkout target branch
-        run: |
-          git fetch origin "${{ github.event.inputs.target-branch }}"
-          git checkout "${{ github.event.inputs.target-branch }}"
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
@@ -81,6 +60,6 @@ jobs:
           else
             echo "📝 Changes detected — committing updated snapshot outputs..."
             git commit -m "Update snapshot outputs"
-            git push origin ${{ github.event.inputs.target-branch }}
-            echo "🚀 Changes committed and pushed to '${{ github.event.inputs.target-branch }}'."
+            git push origin HEAD:${{ github.ref_name }}
+            echo "🚀 Changes committed and pushed to '${{ github.ref_name }}'."
           fi

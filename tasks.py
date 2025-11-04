@@ -16,18 +16,11 @@ from invoke.context import Context
 from invoke.runners import Result
 
 # Internal modules
+import paths as p
 from tests.snapshots.test_snapshots import test_snapshots
 
-# Project related paths
-ROOT_DIR = pathlib.Path(__file__).parent
-MODEL_ENTRY_FILE = ROOT_DIR.joinpath("run.py")
-SOURCE_DIR = ROOT_DIR.joinpath("src")
-TEST_DIR = ROOT_DIR.joinpath("tests")
-UNIT_TEST_DIR = TEST_DIR.joinpath("unit")
-SNAPSHOT_TEST_DIR = TEST_DIR.joinpath("snapshots")
-TASKS_DIR = ROOT_DIR.joinpath("tasks.py")
-README_DIR = ROOT_DIR.joinpath("README.md")
-PYTHON_TARGETS = [MODEL_ENTRY_FILE, SOURCE_DIR, TEST_DIR, TASKS_DIR]  # paths containing .py files
+# Paths containing .py files
+PYTHON_TARGETS = [p.SOURCE_DIR, p.TEST_DIR, p.MODEL_ENTRY_FILE, p.TASKS_DIR, p.PATHS_DIR]
 PYTHON_TARGETS_STR = " ".join([str(p) for p in PYTHON_TARGETS])
 
 
@@ -46,8 +39,8 @@ def test(c, coverage_report=False):
             the task through the CLI because Invoke does it automatically.
         coverage_report: If true, produces a coverage report as well.
     """
-    options = f"--cov-report term-missing --cov={SOURCE_DIR}" if coverage_report else ""
-    _run(c, f"poetry run pytest {TEST_DIR} --verbose --capture=no {options}")
+    options = f"--cov-report term-missing --cov={p.SOURCE_DIR}" if coverage_report else ""
+    _run(c, f"poetry run pytest {p.TEST_DIR} --verbose --capture=no {options}")
 
 
 @task()
@@ -61,8 +54,8 @@ def run_unit_test(c, coverage_report=False):
             the task through the CLI because Invoke does it automatically.
         coverage_report: If true, produces a coverage report as well.
     """
-    options = f"--cov-report term-missing --cov={SOURCE_DIR}" if coverage_report else ""
-    _run(c, f"poetry run pytest {UNIT_TEST_DIR} --verbose --capture=no {options}")
+    options = f"--cov-report term-missing --cov={p.SOURCE_DIR}" if coverage_report else ""
+    _run(c, f"poetry run pytest {p.TEST_UNIT_DIR} --verbose --capture=no {options}")
 
 
 @task()
@@ -84,8 +77,8 @@ def run_snapshot_test(c, type_="compare", coverage_report=False):
             possible when type="compare".
     """
     if type_ == "compare":
-        options = f"--cov-report term-missing --cov={SOURCE_DIR}" if coverage_report else ""
-        _run(c, f"poetry run pytest {SNAPSHOT_TEST_DIR} --verbose --capture=no {options}")
+        options = f"--cov-report term-missing --cov={p.SOURCE_DIR}" if coverage_report else ""
+        _run(c, f"poetry run pytest {p.TEST_SNAPSHOTS_FILE} --verbose --capture=no {options}")
     else:
         test_snapshots(type_)
 
@@ -152,9 +145,9 @@ def run_lint_readme(c, check=False):
         check: If true, checks if code should be formatted, but does not apply any formatting
             changes. Otherwise, applies formatting changes.
     """
-    if not README_DIR.is_file():
+    if not p.README_DIR.is_file():
         print(
-            f"File '{README_DIR}' not found! Please make sure that a README.md file exists "
+            f"File '{p.README_DIR}' not found! Please make sure that a README.md file exists "
             f"and that it is located in the project's root directory."
         )
         exit(1)
@@ -162,7 +155,7 @@ def run_lint_readme(c, check=False):
     action_log_str = "Running linters on" if check else "Formatting"
     print(f"{action_log_str} markdown file README.md ...")
     options = "scan" if check else "fix"
-    _run(c, f"poetry run pymarkdown {options} {README_DIR}")
+    _run(c, f"poetry run pymarkdown {options} {p.README_DIR}")
 
 
 @task()

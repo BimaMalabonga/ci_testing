@@ -299,6 +299,5 @@ The workflow works as follows:
 To trigger the workflow:
 
 - Go to GitHub > Actions > Update Snapshot Tests > Run workflow.
-- Under `Use worflow from`, select the master branch.
-- Under `Run workflow on the following branch`, enter the development branch where the new
-  expected outputs should be committed.
+- Under `Use worflow from`, select the development branch where the new expected outputs should
+  be committed.

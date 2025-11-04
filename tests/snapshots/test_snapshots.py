@@ -14,12 +14,11 @@ from detquantlib.data import DetDatabase
 from dotenv import load_dotenv
 
 # Internal modules
+import paths
 from src.main import main as main_model
 
 # Constants
-SNAPSHOTS_DIR = Path(__file__).parent
-PROJECT_BASE_DIR = SNAPSHOTS_DIR.parent.parent
-CASES_DIR = SNAPSHOTS_DIR.joinpath("Cases")
+CASES_DIR = paths.TEST_SNAPSHOTS_DIR.joinpath("Cases")
 EXPECTED_OUTPUTS_FOLDER = "ExpectedOutputs"
 OUTPUTS_FOLDER_NAME = "Outputs"
 INPUTS_FOLDER_NAME = "Inputs"
@@ -83,7 +82,7 @@ def test_snapshots(run_type: Literal["compare", "update", "create"] = "compare")
         os.chdir(case_dir)
 
         # Define folder directories
-        project_inputs_base_dir = PROJECT_BASE_DIR.joinpath(INPUTS_FOLDER_NAME)
+        project_inputs_base_dir = paths.ROOT_DIR.joinpath(INPUTS_FOLDER_NAME)
         case_inputs_base_dir = case_dir.joinpath(INPUTS_FOLDER_NAME)
         expected_outputs_base_dir = case_dir.joinpath(EXPECTED_OUTPUTS_FOLDER)
         outputs_base_dir = case_dir.joinpath(OUTPUTS_FOLDER_NAME)
@@ -281,6 +280,10 @@ def copy_outputs(src: Path, dst: Path):
     # Hard-coded extensions that should not be copied
     extensions_to_ignore = [".html"]
 
+    # Clear destination directory
+    shutil.rmtree(dst)
+    dst.mkdir(parents=True, exist_ok=True)
+
     # Loop over files and sub-folders located in source directory
     for root, _, filenames in os.walk(src):
         # Define root in destination directory
@@ -294,7 +297,7 @@ def copy_outputs(src: Path, dst: Path):
 
             if src_file_dir.suffix not in extensions_to_ignore:
                 # Create destination folder (only if extension is not ignored)
-                os.makedirs(dst_root, exist_ok=True)
+                dst_root.mkdir(parents=True, exist_ok=True)
 
                 # Copy file
                 shutil.copy2(src=src_file_dir, dst=dst_file_dir)
