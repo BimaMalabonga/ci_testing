@@ -35,8 +35,10 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v4
+        env:
+          TARGET_BRANCH: $BRANCH
         with:
-          ref: ${{ github.event.client_payload.branch || github.head_ref }}
+          ref: ${{ env.TARGET_BRANCH }}
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
