@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "poetrytemplate"
+name = "ci_testing"
 version = "0.1.0"
 description = ""
 authors = ["x <x@det.nl>"]
 readme = "README.md"
-repository = "https://github.com/Dynamic-Energy-Trading/poetrytemplate"
+repository = "https://github.com/Dynamic-Energy-Trading/ci_testing"
 packages = [
     { include = "src" }, # Specifies the location of the package
 ]
