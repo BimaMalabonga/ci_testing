@@ -67,6 +67,7 @@ jobs:
       - name: Trigger PR workflow via repository_dispatch
         uses: peter-evans/repository-dispatch@v3
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           event-type: dispatch-update-snapshots
           client-payload: |
             {
