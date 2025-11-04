@@ -28,9 +28,9 @@ jobs:
             echo "branch=${{ github.event.client_payload.branch }}" >> $GITHUB_OUTPUT
           else
             echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          fi
 
-        echo "Target branch: ${{ steps.branch.outputs.branch }}"
+          # Print for debugging
+          echo "Resolved target branch: ${{ steps.branch.outputs.branch }}"
 
       - name: Checkout repository
         uses: actions/checkout@v4
