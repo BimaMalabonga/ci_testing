@@ -29,9 +29,6 @@ jobs:
           else
             echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
-          # Print for debugging
-          echo "Resolved target branch: ${{ steps.branch.outputs.branch }}"
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
