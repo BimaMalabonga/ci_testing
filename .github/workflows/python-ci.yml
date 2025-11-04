@@ -27,14 +27,19 @@ jobs:
           echo "Event: ${{ github.event_name }}"
 
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            echo "branch=${{ github.event.client_payload.branch }}" >> $GITHUB_OUTPUT
+            TARGET_BRANCH="${{ github.event.client_payload.branch }}"
           else
-            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            # Use GITHUB_REF_NAME if available
+            TARGET_BRANCH="${GITHUB_REF_NAME:-${{ github.ref_name }}}"
+
+            # Strip /merge suffix if present
+            TARGET_BRANCH="${TARGET_BRANCH%%/merge}"
           fi
-      
-      - name: Print target branch
-        run: |
-          echo "Target branch: ${{ steps.branch.outputs.branch }}"
+
+          echo "Resolved target branch: $TARGET_BRANCH"
+
+          # Set output
+          echo "branch=$TARGET_BRANCH" >> $GITHUB_OUTPUT
 
       - name: Checkout repository
         uses: actions/checkout@v4
