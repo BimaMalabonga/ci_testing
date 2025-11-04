@@ -21,12 +21,11 @@ jobs:
         python-version: ["3.11"]
 
     steps:
-      - name: Determine target branch
-        id: branch
+      - name: Print branch
+        env:
+          BRANCH: ${{ github.event.client_payload.branch || github.head_ref }}
         run: |
-          BRANCH="${{ github.event.client_payload.branch || github.head_ref }}"
           echo "Running workflow on branch: $BRANCH"
-          echo "Event: ${{ github.event_name }}"
 
       - name: Checkout repository
         uses: actions/checkout@v4
