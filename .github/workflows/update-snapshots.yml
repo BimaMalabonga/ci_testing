@@ -71,5 +71,5 @@ jobs:
           event-type: dispatch-update-snapshots
           client-payload: |
             {
-              "branch": "${{ github.ref }}"
+              "branch": "${{ github.ref_name }}"
             }
