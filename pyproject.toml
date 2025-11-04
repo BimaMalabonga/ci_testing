@@ -11,7 +11,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.11,<4.0"
-python-dotenv = "^1.1.1"
+python-dotenv = "^1.2.1"
 detquantlib = "^3.10.2"
 
 [tool.poetry.group.dev.dependencies]
