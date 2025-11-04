@@ -1,0 +1,3 @@
+* Copyright (C) 2025 Dynamic Energy Trading B.V. - All Rights Reserved
+* The copying and distribution of this project via any medium is strictly prohibited without the express consent of Dynamic Energy Trading B.V.
+* Proprietary and confidential
