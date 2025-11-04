@@ -21,7 +21,7 @@ jobs:
         python-version: ["3.11"]
 
     steps:
-      - name: Print branch
+      - name: Determine target branch
         run: |
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
             BRANCH="${{ github.event.client_payload.branch }}"
@@ -30,7 +30,7 @@ jobs:
           else
             BRANCH="${{ github.ref_name }}"
           fi
-          echo "Running workflow on branch: $BRANCH"
+          echo "Event: ${{ github.event_name }}. Running workflow on branch: $BRANCH"
 
       - name: Checkout repository
         uses: actions/checkout@v4
