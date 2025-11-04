@@ -31,7 +31,9 @@ jobs:
           else
             echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           fi
-          
+      
+      - name: Print target branch
+        run: |
           echo "Target branch: ${{ steps.branch.outputs.branch }}"
 
       - name: Checkout repository
