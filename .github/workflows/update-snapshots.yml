@@ -63,3 +63,13 @@ jobs:
             git push origin HEAD:${{ github.ref_name }}
             echo "🚀 Changes committed and pushed to '${{ github.ref_name }}'."
           fi
+
+      - name: Trigger PR workflow via repository_dispatch
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: dispatch-update-snapshots
+          client-payload: |
+            {
+              "branch": "${{ github.event.inputs.pr_branch }}"
+            }
