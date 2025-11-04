@@ -28,6 +28,7 @@ jobs:
             echo "branch=${{ github.event.client_payload.branch }}" >> $GITHUB_OUTPUT
           else
             echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Checkout repository
         uses: actions/checkout@v4
