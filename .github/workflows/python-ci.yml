@@ -8,6 +8,8 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  repository_dispatch:
+    types: [dispatch-update-snapshots]
 
 jobs:
   python_ci:
