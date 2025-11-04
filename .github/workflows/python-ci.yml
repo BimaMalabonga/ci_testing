@@ -22,9 +22,14 @@ jobs:
 
     steps:
       - name: Print branch
-        env:
-          BRANCH: ${{ github.event.client_payload.branch || github.head_ref }}
         run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            BRANCH="${{ github.event.client_payload.branch }}"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${{ github.ref_name }}"
+          fi
           echo "Running workflow on branch: $BRANCH"
 
       - name: Checkout repository
