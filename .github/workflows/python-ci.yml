@@ -30,7 +30,8 @@ jobs:
           else
             BRANCH="${{ github.ref_name }}"
           fi
-          echo "Event: ${{ github.event_name }}. Running workflow on branch: $BRANCH"
+          echo "⚡ Workflow triggered by event: ${{ github.event_name }}"
+          echo "🌿 Running workflow on branch: $BRANCH"
 
       - name: Checkout repository
         uses: actions/checkout@v4
