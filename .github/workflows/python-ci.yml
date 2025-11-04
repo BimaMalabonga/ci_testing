@@ -32,13 +32,12 @@ jobs:
           fi
           echo "⚡ Workflow triggered by event: ${{ github.event_name }}"
           echo "🌿 Running workflow on branch: $BRANCH"
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@v4
-        env:
-          TARGET_BRANCH: $BRANCH
         with:
-          ref: ${{ env.TARGET_BRANCH }}
+          ref: ${{ env.BRANCH }}
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
