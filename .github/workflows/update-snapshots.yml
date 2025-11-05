@@ -23,9 +23,8 @@ jobs:
         with:
           app_id: ${{ secrets.QUANT_CI_BOT_APP_ID }}
           private_key: ${{ secrets.QUANT_CI_BOT_APP_PRIVATE_KEY }}
-          installation_id: ${{ secrets.QUANT_CI_BOT_INSTALLATION_ID }}
-          outputs: |
-            expires_at
+          installation_retrieval_mode: token
+          repositories: ${{ github.repository }}
 
       - name: Inspect token info
         run: echo "Token expires at ${{ steps.app-token.outputs.expires_at }}"
