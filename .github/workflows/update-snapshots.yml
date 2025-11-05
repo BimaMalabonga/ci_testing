@@ -8,68 +8,22 @@ permissions:
   pull-requests: write
 
 jobs:
-  update_outputs:
-
+  update-timestamp:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.11"]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
-          fetch-depth: 0
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          virtualenvs-path: .venv
-          installer-parallel: true
-
-      - name: Install dependencies
+      - name: Update timestamp file
         run: |
-          poetry install --no-root
-          source .venv/bin/activate
-
-      - name: Run snapshot tests to update expected outputs
-        run: |
-          echo "🧪 Running snapshot tests..."
-          poetry run inv run-snapshot-test -t update
-          echo "✅ Snapshot tests completed."
-
-      - name: Commit updated snapshot outputs
-        run: |
-          echo "📦 Checking for changes in expected outputs of snapshot tests..."
-          
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -u
-          
-          if git diff --cached --quiet; then
-            echo "✅ No changes detected. Nothing to commit."
-            exit 0
-          else
-            echo "📝 Changes detected — committing updated snapshot outputs..."
-            git commit -m "Update snapshot outputs"
-            echo "🚀 Changes committed."
-          fi
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > timestamp.txt
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Automated update
-          branch: snapshotbot/update-outputs
-          base: master
-          title: "Update snapshot outputs"
-          body: "This PR was created automatically by GitHub Actions."
+          branch: automated/timestamp-update
+          commit-message: "Update timestamp"
+          title: "Automated timestamp update"
+          body: "This PR updates the timestamp.txt file with the current UTC time."
+          base: testing
