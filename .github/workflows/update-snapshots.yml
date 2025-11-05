@@ -17,6 +17,9 @@ jobs:
         python-version: ["3.11"]
 
     steps:
+      - name: Print repo
+        run: echo "Repo ${{ github.repository }}"
+
       - name: Generate GitHub App token
         id: app-token
         uses: actions/create-github-app-token@v2
