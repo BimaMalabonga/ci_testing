@@ -5,7 +5,6 @@ on:
 
 permissions:
   contents: write
-  id-token: write
 
 jobs:
   update_outputs:
@@ -17,16 +16,32 @@ jobs:
         python-version: ["3.11"]
 
     steps:
-      - name: Generate GitHub App token
+      - name: Generate GitHub App Installation Access Token
         id: app-token
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.QUANT_CI_BOT_APP_ID }}
           private-key: ${{ secrets.QUANT_CI_BOT_APP_PRIVATE_KEY }}
-          repositories: ${{ github.repository }}
+        continue-on-error: true
 
-      - name: Inspect token info
-        run: echo "Token expires at ${{ steps.app-token.outputs.expires_at }}"
+      - name: Check if token was generated
+        run: |
+          if [ "${{ steps.app-token.outcome }}" = "success" ]; then
+            echo "✅ Token generated successfully."
+          else
+            echo "❌ Failed to generate token for GitHub App quant-ci-bot."
+            echo ""
+            echo "This can happen for several reasons:"
+            echo "1. The quant-ci-bot app is not installed on this repository."
+            echo "2. The app credentials (App ID or Private Key) are incorrect or missing."
+            echo "3. The app does not have permission to generate tokens for this repository."
+            echo ""
+            echo "To fix this:"
+            echo "👉 Install the app (if not installed): https://github.com/apps/quant-ci-bot/installations/new"
+            echo "👉 Check that your workflow secrets QUANT_CI_BOT_APP_ID and QUANT_CI_BOT_APP_PRIVATE_KEY are correct."
+            echo "👉 Ensure the app has access to this repository."
+            exit 1
+          fi
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -72,6 +87,7 @@ jobs:
             echo "✅ No changes detected. Nothing to commit."
           else
             echo "📝 Changes detected — committing updated snapshot outputs..."
+            git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }}.git
             git commit -m "Update snapshot outputs"
             git push origin HEAD:${{ github.ref_name }}
             echo "🚀 Changes committed and pushed to '${{ github.ref_name }}'."
