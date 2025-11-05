@@ -21,11 +21,11 @@ jobs:
     steps:
       - name: Check if GitHub App is installed
         run: |
-          if gh api /repos/${{ github.repository }}/installation --jq '.app_slug' | grep -q "quant-ci-bot"; then
+          if gh api /repos/${{ github.repository }}/installation --jq '.app_slug' | grep -q "bima-ci-bot"; then
             echo "✅ GitHub App quant-ci-bot is installed"
           else
             echo "❌ This repository requires the GitHub App quant-ci-bot to be installed."
-            echo "👉 Install GutHub App here: https://github.com/apps/quant-ci-bot/installations/new"
+            echo "👉 Install GitHub App here: https://github.com/apps/quant-ci-bot/installations/new"
             exit 1
           fi
 
