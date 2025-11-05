@@ -5,26 +5,90 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
-  update-timestamp:
+  update_outputs:
+
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11"]
 
     steps:
+      - name: Generate GitHub App Installation Access Token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.QUANT_CI_BOT_APP_ID }}
+          private-key: ${{ secrets.QUANT_CI_BOT_APP_PRIVATE_KEY }}
+        continue-on-error: true
+
+      - name: Check if token was generated
+        run: |
+          if [ "${{ steps.app-token.outcome }}" = "success" ]; then
+            echo "✅ Token generated successfully."
+          else
+            echo "❌ Failed to generate token for GitHub App quant-ci-bot."
+            echo ""
+            echo "This can happen for several reasons:"
+            echo "1. The quant-ci-bot app is not installed on this repository."
+            echo "2. The app credentials (App ID or Private Key) are incorrect or missing."
+            echo "3. The app does not have permission to generate tokens for this repository."
+            echo ""
+            echo "To fix this:"
+            echo "👉 Install the app (if not installed): https://github.com/apps/quant-ci-bot/installations/new"
+            echo "👉 Check that your workflow secrets QUANT_CI_BOT_APP_ID and QUANT_CI_BOT_APP_PRIVATE_KEY are correct."
+            echo "👉 Ensure the app has access to this repository."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Update timestamp file
-        run: |
-          date -u +"%Y-%m-%dT%H:%M:%SZ" > timestamp.txt
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
         with:
-          branch: automated/timestamp-update
-          commit-message: "Update timestamp"
-          title: "Automated timestamp update"
-          body: "This PR updates the timestamp.txt file with the current UTC time."
-          base: testing
-          delete-branch: true
+          ref: ${{ github.ref }}
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          virtualenvs-path: .venv
+          installer-parallel: true
+
+      - name: Install dependencies
+        run: |
+          poetry install --no-root
+          source .venv/bin/activate
+
+      - name: Run snapshot tests to update expected outputs
+        run: |
+          echo "🧪 Running snapshot tests..."
+          poetry run inv run-snapshot-test -t update
+          echo "✅ Snapshot tests completed."
+
+      - name: Commit updated snapshot outputs
+        run: |
+          echo "📦 Checking for changes in expected outputs of snapshot tests..."
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          
+          if git diff --cached --quiet; then
+            echo "✅ No changes detected. Nothing to commit."
+          else
+            echo "📝 Changes detected — committing updated snapshot outputs..."
+            git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }}.git
+            git commit -m "Update snapshot outputs"
+            git push origin HEAD:${{ github.ref_name }}
+            echo "🚀 Changes committed and pushed to '${{ github.ref_name }}'."
+          fi
