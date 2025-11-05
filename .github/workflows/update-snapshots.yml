@@ -19,17 +19,6 @@ jobs:
       GH_TOKEN: ${{ github.token }}  # enables gh CLI auth
 
     steps:
-      - name: Check if GitHub App is installed
-        run: |
-          INSTALLATIONS=$(gh api /repos/${{ github.repository }}/installations --jq '.installations[].app_slug')
-          if echo "$INSTALLATIONS" | grep -q "quant-ci-bot"; then
-            echo "✅ GitHub App quant-ci-bot is installed"
-          else
-            echo "❌ This repository requires the GitHub App quant-ci-bot to be installed."
-            echo "👉 Install GitHub App here: https://github.com/apps/quant-ci-bot/installations/new"
-            exit 1
-          fi
-
       - name: Generate GitHub App token
         id: app-token
         uses: actions/create-github-app-token@v2
@@ -83,6 +72,15 @@ jobs:
             echo "📝 Changes detected — committing updated snapshot outputs..."
             git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }}.git
             git commit -m "Update snapshot outputs"
-            git push origin HEAD:${{ github.ref_name }}
             echo "🚀 Changes committed and pushed to '${{ github.ref_name }}'."
           fi
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Automated update
+          branch: snapshotbot/update-outputs
+          base: ${{ github.ref_name }}
+          title: "Update snapshot outputs"
+          body: "This PR was created automatically by GitHub Actions."
