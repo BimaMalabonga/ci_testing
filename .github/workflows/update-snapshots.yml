@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   update_outputs:
@@ -16,11 +17,22 @@ jobs:
         python-version: ["3.11"]
 
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: ${{ secrets.INSTALLATION_ID }}
+
+      - name: Inspect token info
+        run: echo "Token expires at ${{ steps.app-token.outputs.expires_at }}"
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
 
       - name: Set up Python ${{ matrix.python-version }}
@@ -63,13 +75,3 @@ jobs:
             git push origin HEAD:${{ github.ref_name }}
             echo "🚀 Changes committed and pushed to '${{ github.ref_name }}'."
           fi
-
-      - name: Trigger PR workflow via repository_dispatch
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          event-type: dispatch-update-snapshots
-          client-payload: |
-            {
-              "branch": "${{ github.ref_name }}"
-            }

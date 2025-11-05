@@ -9,8 +9,6 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-  repository_dispatch:
-    types: [dispatch-update-snapshots]
 
 jobs:
   python_ci:
@@ -22,23 +20,8 @@ jobs:
         python-version: ["3.11"]
 
     steps:
-      - name: Determine target branch
-        run: |
-          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            BRANCH="${{ github.event.client_payload.branch }}"
-          elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            BRANCH="${{ github.head_ref }}"
-          else
-            BRANCH="${{ github.ref_name }}"
-          fi
-          echo "⚡ Workflow triggered by event: ${{ github.event_name }}"
-          echo "🌿 Running workflow on branch: $BRANCH"
-          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BRANCH }}
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
