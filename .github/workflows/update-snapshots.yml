@@ -15,23 +15,11 @@ jobs:
       matrix:
         python-version: ["3.11"]
 
-    env:
-      GH_TOKEN: ${{ github.token }}  # enables gh CLI auth
-
     steps:
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.QUANT_CI_BOT_APP_ID }}
-          private-key: ${{ secrets.QUANT_CI_BOT_APP_PRIVATE_KEY }}
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-          token: ${{ steps.app-token.outputs.token }}
-          persist-credentials: false
           fetch-depth: 0
 
       - name: Set up Python ${{ matrix.python-version }}
@@ -68,11 +56,11 @@ jobs:
           
           if git diff --cached --quiet; then
             echo "✅ No changes detected. Nothing to commit."
+            exit 0
           else
             echo "📝 Changes detected — committing updated snapshot outputs..."
-            git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }}.git
             git commit -m "Update snapshot outputs"
-            echo "🚀 Changes committed and pushed to '${{ github.ref_name }}'."
+            echo "🚀 Changes committed."
           fi
 
       - name: Create Pull Request
