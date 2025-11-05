@@ -70,6 +70,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Automated update
           branch: snapshotbot/update-outputs
-          base: ${{ github.ref_name }}
+          base: master
           title: "Update snapshot outputs"
           body: "This PR was created automatically by GitHub Actions."
