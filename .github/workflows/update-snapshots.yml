@@ -26,4 +26,4 @@ jobs:
           commit-message: "Update timestamp"
           title: "Automated timestamp update"
           body: "This PR updates the timestamp.txt file with the current UTC time."
-          base: testing
+          base: ${{ github.ref_name }}
