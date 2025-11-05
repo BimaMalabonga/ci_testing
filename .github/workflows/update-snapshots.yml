@@ -21,9 +21,9 @@ jobs:
         id: app-token
         uses: tibdex/github-app-token@v2
         with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-          installation_id: ${{ secrets.INSTALLATION_ID }}
+          app_id: ${{ secrets.QUANT_CI_BOT_APP_ID }}
+          private_key: ${{ secrets.QUANT_CI_BOT_APP_PRIVATE_KEY }}
+          installation_id: ${{ secrets.QUANT_CI_BOT_INSTALLATION_ID }}
 
       - name: Inspect token info
         run: echo "Token expires at ${{ steps.app-token.outputs.expires_at }}"
