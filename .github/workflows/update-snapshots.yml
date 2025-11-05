@@ -25,6 +25,9 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: ${{ secrets.INSTALLATION_ID }}
 
+      - name: Inspect token info
+        run: echo "Token expires at ${{ steps.app-token.outputs.expires_at }}"
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
