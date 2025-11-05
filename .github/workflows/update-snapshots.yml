@@ -16,6 +16,17 @@ jobs:
         python-version: ["3.11"]
 
     steps:
+      - name: Check if GitHub App is installed
+        run: |
+          # Check installation
+          if gh api /repos/${{ github.repository }}/installation --jq '.app_slug' | grep -q "quant-ci-bot"; then
+            echo "✅ GitHub App quant-ci-bot is installed"
+          else
+            echo "❌ quant-ci-bot is NOT installed"
+            echo "This repository requires the quant-ci-bot GitHub App to be installed."
+            exit 1
+          fi
+
       - name: Generate GitHub App token
         id: app-token
         uses: actions/create-github-app-token@v2
