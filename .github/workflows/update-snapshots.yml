@@ -5,7 +5,6 @@ on:
 
 permissions:
   contents: write
-  id-token: write
 
 jobs:
   update_outputs:
@@ -23,9 +22,6 @@ jobs:
         with:
           app-id: ${{ secrets.QUANT_CI_BOT_APP_ID }}
           private-key: ${{ secrets.QUANT_CI_BOT_APP_PRIVATE_KEY }}
-
-      - name: Inspect token info
-        run: echo "Token expires at ${{ steps.app-token.outputs.expires_at }}"
 
       - name: Checkout repository
         uses: actions/checkout@v4
