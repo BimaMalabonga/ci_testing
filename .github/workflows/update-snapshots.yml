@@ -62,3 +62,4 @@ jobs:
           title: "Automated timestamp update"
           body: "This PR updates the timestamp.txt file with the current UTC time."
           base: ${{ github.ref_name }}
+          delete-branch: true
