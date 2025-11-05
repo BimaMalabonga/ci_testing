@@ -1,6 +1,5 @@
 # Python continuous integration (CI) workflow. The workflow runs tests to ensure the integrity
 # of the codebase's content, and linters to ensure the consistency of its format.
-#temp
 
 name: Python CI
 
