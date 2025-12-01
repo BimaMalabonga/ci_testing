@@ -16,7 +16,7 @@ detquantlib = "^3.10.2"
 
 [tool.poetry.group.dev.dependencies]
 invoke = "^2.2.0"
-pytest = "^8.4.2"
+pytest = "^9.0.1"
 pytest-cov = "^7.0.0"
 black = "^25.9.0"
 darglint = "^1.8.1"
